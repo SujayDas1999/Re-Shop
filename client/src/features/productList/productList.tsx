@@ -11,7 +11,7 @@ function productList({ products }: Props) {
     <>
       <Grid container spacing={4}>
         {products.map((item, index) => (
-          <Grid item xs={4} key={item.id}>
+          <Grid item xs={3} key={item.id}>
             <ProductCard index={index} item={item}></ProductCard>
           </Grid>
         ))}
