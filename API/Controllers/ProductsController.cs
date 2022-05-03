@@ -23,15 +23,15 @@ namespace API.Controllers
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
             var result = await this.context.Products.ToListAsync();
-            if(result == null) return NoContent();
+            if (result == null) return NoContent();
             return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProductById(int id)
         {
-            var result = await this.context.Products.SingleOrDefaultAsync(x => x.Id == id);
-            if (result == null) return NotFound();
+            var result = await this.context.Products.SingleAsync(p => p.Id == id);
+            if(result == null) return NotFound();
             return Ok(result);
         }
     }

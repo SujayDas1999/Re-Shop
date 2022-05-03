@@ -28,6 +28,7 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -38,6 +39,7 @@ namespace API
             {
                 opt.UseSqlServer(Configuration.GetConnectionString("ReShop"));
             });
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,7 +55,13 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors(opt =>
+            {
+                opt.AllowAnyHeader();
+                opt.AllowAnyMethod();
+                opt.AllowAnyOrigin();
 
+            });
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
