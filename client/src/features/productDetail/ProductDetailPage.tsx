@@ -12,6 +12,10 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Product } from "../../app/models/Product";
 import axios from "axios";
+import agent from "../../app/api/agent";
+import NotFoundComponent from "../../app/errors/NotFoundComponent";
+import { history } from "../..";
+import LoadingComponent from "../../app/layout/LoadingComponent";
 
 function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -19,16 +23,15 @@ function ProductDetailPage() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    axios
-      .get<Product>(`https://localhost:5001/api/products/${id}`)
-      .then((result) => setProduct(result.data))
+    agent.Catalog.details(parseInt(id))
+      .then((product) => setProduct(product))
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <h3>Loading....</h3>;
+  if (loading) return <LoadingComponent message="Loading Product ..." />;
 
-  if (!product) return <h3>Product not found</h3>;
+  if (!product) return <NotFoundComponent />;
 
   return (
     <>

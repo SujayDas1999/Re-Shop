@@ -8,9 +8,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    [Route("api/products")]
-    [ApiController]
-    public class Products : ControllerBase
+    public class Products : BaseController
     {
         private readonly StoreContext context;
 
@@ -30,7 +28,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProductById(int id)
         {
-            var result = await this.context.Products.SingleAsync(p => p.Id == id);
+            var result = await this.context.Products.FindAsync(id);
             if(result == null) return NotFound();
             return Ok(result);
         }
