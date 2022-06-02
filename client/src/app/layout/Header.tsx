@@ -10,8 +10,8 @@ import {
   Typography,
 } from "@mui/material";
 import { ShoppingCart } from "@mui/icons-material";
-import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { useStoreContext } from "../context/StoreContext";
 
 const midLinks = [
   { title: "catalog", path: "/catalog" },
@@ -37,6 +37,9 @@ const navStyles = {
 };
 
 function Header() {
+  const { basket } = useStoreContext();
+  const itemCount = basket?.items.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
     <AppBar position="sticky" sx={{ mb: 4 }}>
       <Toolbar
@@ -71,8 +74,13 @@ function Header() {
           ))}
         </List>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton size="large" sx={navStyles}>
-            <Badge badgeContent={4} color="secondary">
+          <IconButton
+            component={Link}
+            to="/basket-page"
+            size="large"
+            sx={navStyles}
+          >
+            <Badge badgeContent={itemCount} color="secondary">
               <ShoppingCart />
             </Badge>
           </IconButton>

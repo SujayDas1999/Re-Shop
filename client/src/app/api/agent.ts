@@ -1,9 +1,9 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { Router } from "react-router-dom";
 import { toast } from "react-toastify";
 import { history } from "../..";
 
-axios.defaults.baseURL = "https://localhost:5001/api/";
+axios.defaults.baseURL = "http://localhost:5000/api/";
+axios.defaults.withCredentials = true;
 
 const responseBody = (response: AxiosResponse) => response.data;
 
@@ -50,14 +50,22 @@ axios.interceptors.response.use(
 
 const requests = {
   get: (url: string) => axios.get(url).then(responseBody),
-  post: (url: string, model: {}) => axios.get(url, model).then(responseBody),
-  put: (url: string, model: {}) => axios.get(url, model).then(responseBody),
-  delete: (url: string) => axios.get(url).then(responseBody),
+  post: (url: string, model: {}) => axios.post(url, model).then(responseBody),
+  put: (url: string, model: {}) => axios.put(url, model).then(responseBody),
+  delete: (url: string) => axios.delete(url).then(responseBody),
 };
 
 const Catalog = {
   list: () => requests.get("products"),
   details: (id: number) => requests.get(`products/${id}`),
+};
+
+const Basket = {
+  get: () => requests.get("basket"),
+  addItem: (productId: number, quantity = 1) =>
+    requests.post(`basket?productId=${productId}&quantity=${quantity}`, {}),
+  removeItem: (productId: number, quantity = 1) =>
+    requests.delete(`basket?productId=${productId}&quantity=${quantity}`),
 };
 
 const TestErrors = {
@@ -71,8 +79,9 @@ const TestErrors = {
 const agent = {
   Catalog,
   TestErrors,
+  Basket,
 };
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000));
+const sleep = () => new Promise((resolve) => setTimeout(resolve, 2000));
 
 export default agent;
