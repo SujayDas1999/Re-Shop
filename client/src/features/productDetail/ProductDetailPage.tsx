@@ -18,14 +18,25 @@ import LoadingComponent from "../../app/layout/LoadingComponent";
 import { useStoreContext } from "../../app/context/StoreContext";
 import { LoadingButton } from "@mui/lab";
 import { SettingsBackupRestoreTwoTone } from "@mui/icons-material";
+import { useAppDispatch, useAppSelector } from "../../app/store/ConfigureStore";
+import {
+  addBasketItemAsync,
+  removeBasketItemAsync,
+  setBasket,
+} from "../basket/BasketSlice";
+import { fetchProductAsync, productSelectors } from "../catalog/CatalogSlice";
 
 function ProductDetailPage() {
-  const { basket, setBasket, removeItem } = useStoreContext();
+  const { basket, status } = useAppSelector((state) => state.basket);
   const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const product = useAppSelector((state) =>
+    productSelectors.selectById(state, parseInt(id))
+  );
+
+  const { status: productStatus } = useAppSelector((state) => state.catalog);
+  const dispatch = useAppDispatch();
+
   const [quantity, setQuantity] = useState<number>(0);
-  const [submitting, setSubmitting] = useState<boolean>(false);
 
   const item = basket?.items.find(
     (Product) => Product.productId === parseInt(id)
@@ -36,34 +47,37 @@ function ProductDetailPage() {
       setQuantity(item.quantity);
     }
 
-    agent.Catalog.details(parseInt(id))
-      .then((product) => setProduct(product))
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
-  }, [id, item]);
+    if (!product) {
+      dispatch(fetchProductAsync(parseInt(id)));
+    }
+  }, [id, item, dispatch, product]);
 
   function handleQuantityOnChange(event: any) {
     if (event.target.value > 0) setQuantity(parseInt(event.target.value));
   }
 
   function handleUpdateCart() {
-    setSubmitting(true);
     if (!item || quantity > item.quantity) {
       const updateQuantity = item ? quantity - item.quantity : quantity;
-      agent.Basket.addItem(product?.id!, updateQuantity)
-        .then((basket) => setBasket(basket))
-        .catch((error) => console.log(error))
-        .finally(() => setSubmitting(false));
+      dispatch(
+        addBasketItemAsync({
+          productId: parseInt(id),
+          quantity: updateQuantity,
+        })
+      );
     } else {
       const updateQuantity = item.quantity - quantity;
-      agent.Basket.removeItem(product?.id!, updateQuantity)
-        .then((basket) => removeItem(product?.id!, updateQuantity))
-        .catch((error) => console.log(error))
-        .finally(() => setSubmitting(false));
+      dispatch(
+        removeBasketItemAsync({
+          productId: parseInt(id),
+          quantity: updateQuantity,
+        })
+      );
     }
   }
 
-  if (loading) return <LoadingComponent message="Loading Product ..." />;
+  if (productStatus === "pendingFetchProduct")
+    return <LoadingComponent message="Loading Product ..." />;
 
   if (!product) return <NotFoundComponent />;
 
@@ -125,7 +139,7 @@ function ProductDetailPage() {
                 disabled={
                   item?.quantity === quantity || (!item && quantity === 0)
                 }
-                loading={submitting}
+                loading={status.includes("pending")}
                 onClick={() => handleUpdateCart()}
                 sx={{ height: "55px" }}
                 size="large"

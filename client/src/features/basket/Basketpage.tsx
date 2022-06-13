@@ -18,50 +18,21 @@ import { Link } from "react-router-dom";
 import agent from "../../app/api/agent";
 import { useStoreContext } from "../../app/context/StoreContext";
 import { BasketItem } from "../../app/models/Basket";
+import { useAppDispatch, useAppSelector } from "../../app/store/ConfigureStore";
 import { currencyFormat } from "../../app/util/util";
+import {
+  addBasketItemAsync,
+  removeBasketItemAsync,
+  setBasket,
+} from "./BasketSlice";
 import BasketSummary from "./BasketSummary";
 
 function Basketpage() {
-  const { basket, removeItem, setBasket } = useStoreContext();
-  const [status, setStatus] = useState({
-    loading: false,
-    name: "",
-  });
+  const { basket, status } = useAppSelector((state) => state.basket);
+  const dispatch = useAppDispatch();
 
-  function handleAddItem(productId: number, name: string) {
-    setStatus({
-      loading: true,
-      name: name,
-    });
-    agent.Basket.addItem(productId)
-      .then((basket) => setBasket(basket))
-      .catch((error) => console.log(error))
-      .finally(() =>
-        setStatus({
-          loading: false,
-          name: "",
-        })
-      );
-  }
-
-  function handleRemoveItem(
-    productId: number,
-    quantity: number = 1,
-    name: string
-  ) {
-    setStatus({
-      loading: true,
-      name: name,
-    });
-    agent.Basket.removeItem(productId, quantity)
-      .then(() => removeItem(productId, quantity))
-      .catch((error) => console.log(error))
-      .finally(() =>
-        setStatus({
-          loading: false,
-          name: "",
-        })
-      );
+  function handleAddItem(productId: number) {
+    dispatch(addBasketItemAsync({ productId }));
   }
 
   if (!basket)
@@ -112,13 +83,15 @@ function Basketpage() {
                 <TableCell align="right">
                   <LoadingButton
                     loading={
-                      status.loading && status.name === "rem" + item.productId
+                      status === "pendingRemoveItem" + item.productId + "rem"
                     }
                     onClick={() =>
-                      handleRemoveItem(
-                        item.productId,
-                        1,
-                        "rem" + item.productId
+                      dispatch(
+                        removeBasketItemAsync({
+                          productId: item.productId,
+                          quantity: 1,
+                          name: "rem",
+                        })
                       )
                     }
                     color="error"
@@ -127,12 +100,8 @@ function Basketpage() {
                   </LoadingButton>
                   {item.quantity}
                   <LoadingButton
-                    loading={
-                      status.loading && status.name === "add" + item.productId
-                    }
-                    onClick={() =>
-                      handleAddItem(item.productId, "add" + item.productId)
-                    }
+                    loading={status === "pendingAddItem" + item.productId}
+                    onClick={() => handleAddItem(item.productId)}
                     color="secondary"
                   >
                     <Add />
@@ -144,13 +113,15 @@ function Basketpage() {
                 <TableCell align="right">
                   <LoadingButton
                     loading={
-                      status.loading && status.name === "remC" + item.productId
+                      status === "pendingRemoveItem" + item.productId + "delete"
                     }
                     onClick={() =>
-                      handleRemoveItem(
-                        item.productId,
-                        item.quantity,
-                        "remC" + item.productId
+                      dispatch(
+                        removeBasketItemAsync({
+                          productId: item.productId,
+                          quantity: item.quantity,
+                          name: "delete",
+                        })
                       )
                     }
                     color="error"
@@ -173,6 +144,7 @@ function Basketpage() {
             variant="contained"
             size="large"
             fullWidth
+            disabled={basket.items.length === 0 ? true : false}
           >
             Checkout
           </Button>
