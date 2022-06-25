@@ -5,13 +5,11 @@ import {
   IconButton,
   List,
   ListItem,
-  Switch,
   Toolbar,
   Typography,
 } from "@mui/material";
 import { ShoppingCart } from "@mui/icons-material";
 import { Link, NavLink } from "react-router-dom";
-import { useStoreContext } from "../context/StoreContext";
 import { useAppSelector } from "../store/ConfigureStore";
 
 const midLinks = [

@@ -11,18 +11,13 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Product } from "../../app/models/Product";
-import agent from "../../app/api/agent";
 import NotFoundComponent from "../../app/errors/NotFoundComponent";
 import LoadingComponent from "../../app/layout/LoadingComponent";
-import { useStoreContext } from "../../app/context/StoreContext";
 import { LoadingButton } from "@mui/lab";
-import { SettingsBackupRestoreTwoTone } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../app/store/ConfigureStore";
 import {
   addBasketItemAsync,
   removeBasketItemAsync,
-  setBasket,
 } from "../basket/BasketSlice";
 import { fetchProductAsync, productSelectors } from "../catalog/CatalogSlice";
 

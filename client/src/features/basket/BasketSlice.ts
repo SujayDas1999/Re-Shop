@@ -1,8 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { stat } from "fs";
 import agent from "../../app/api/agent";
 import { Basket } from "../../app/models/Basket";
-import { Product } from "../../app/models/Product";
 
 export interface BasketState {
   basket: Basket | null;

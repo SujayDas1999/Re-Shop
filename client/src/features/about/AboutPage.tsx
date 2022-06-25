@@ -1,16 +1,7 @@
 import { Button, ButtonGroup, Container, Typography } from "@mui/material";
-import React, { useState } from "react";
 import agent from "../../app/api/agent";
 
 function AboutPage() {
-  const [validationError, setValidationError] = useState<string[]>([]);
-
-  function getValidationError() {
-    agent.TestErrors.getValidationError()
-      .then(() => console.log("should not see this"))
-      .catch((err) => setValidationError(err));
-  }
-
   return (
     <>
       <Container>

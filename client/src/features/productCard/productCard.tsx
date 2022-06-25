@@ -1,4 +1,3 @@
-import { Cookie } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   Avatar,
@@ -10,14 +9,11 @@ import {
   CardMedia,
   Chip,
 } from "@mui/material";
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import agent from "../../app/api/agent";
-import { useStoreContext } from "../../app/context/StoreContext";
 import { Product } from "../../app/models/Product";
 import { useAppDispatch, useAppSelector } from "../../app/store/ConfigureStore";
 import { currencyFormat } from "../../app/util/util";
-import { addBasketItemAsync, setBasket } from "../basket/BasketSlice";
+import { addBasketItemAsync } from "../basket/BasketSlice";
 
 interface Props {
   index: number;

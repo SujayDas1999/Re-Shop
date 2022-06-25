@@ -13,18 +13,11 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import agent from "../../app/api/agent";
-import { useStoreContext } from "../../app/context/StoreContext";
 import { BasketItem } from "../../app/models/Basket";
 import { useAppDispatch, useAppSelector } from "../../app/store/ConfigureStore";
 import { currencyFormat } from "../../app/util/util";
-import {
-  addBasketItemAsync,
-  removeBasketItemAsync,
-  setBasket,
-} from "./BasketSlice";
+import { addBasketItemAsync, removeBasketItemAsync } from "./BasketSlice";
 import BasketSummary from "./BasketSummary";
 
 function Basketpage() {
@@ -37,16 +30,6 @@ function Basketpage() {
 
   if (!basket)
     return <Typography variant="h3">Your basket is empty. </Typography>;
-
-  function createData(
-    name: string,
-    calories: number,
-    fat: number,
-    carbs: number,
-    protein: number
-  ) {
-    return { name, calories, fat, carbs, protein };
-  }
 
   return (
     <>

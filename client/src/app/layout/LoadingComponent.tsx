@@ -1,7 +1,5 @@
 import { Backdrop, CircularProgress, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React from "react";
-import { string } from "yup";
 
 interface Props {
   message?: string;

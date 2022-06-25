@@ -1,12 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Router } from "react-router-dom";
+import { Router } from "react-router-dom";
 import "../src/app/layout/styles.css";
 import App from "./app/layout/App";
 import reportWebVitals from "./reportWebVitals";
 import { createBrowserHistory } from "history";
-import { StoreProvider } from "./app/context/StoreContext";
-import { configureStore } from "@reduxjs/toolkit";
 
 import { Provider } from "react-redux";
 import { store } from "./app/store/ConfigureStore";
