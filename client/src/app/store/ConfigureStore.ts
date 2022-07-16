@@ -3,6 +3,7 @@
 
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import { accountSlice } from "../../features/account/AccountSlice";
 import { basketSlice } from "../../features/basket/BasketSlice";
 import { catalogSlice } from "../../features/catalog/CatalogSlice";
 import { counterSlice } from "../../features/contact/CounterSlice";
@@ -16,6 +17,7 @@ export const store = configureStore({
     counter: counterSlice.reducer,
     basket: basketSlice.reducer,
     catalog: catalogSlice.reducer,
+    account: accountSlice.reducer,
   },
 });
 

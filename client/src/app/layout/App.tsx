@@ -13,30 +13,35 @@ import "react-toastify/dist/ReactToastify.css";
 import ServerErrorComponent from "../errors/ServerErrorComponent";
 import NotFoundComponent from "../errors/NotFoundComponent";
 import Basketpage from "../../features/basket/Basketpage";
-import { useStoreContext } from "../context/StoreContext";
 import { getCookie } from "../util/util";
 import agent from "../api/agent";
 import LoadingComponent from "./LoadingComponent";
 import Checkout from "../../features/checkout/Checkout";
 import { useAppDispatch } from "../store/ConfigureStore";
-import { setBasket } from "../../features/basket/BasketSlice";
+import { fetchBasketAsync, setBasket } from "../../features/basket/BasketSlice";
+import Login from "../../features/account/Login";
+import Register from "../../features/account/Register";
+import { fetchCurrentUser } from "../../features/account/AccountSlice";
+import { useCallback } from "react";
+import PrivateRoute from "./PrivateRoute";
 
 function App() {
   const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const buyerId = getCookie("buyerId");
-    if (buyerId) {
-      agent.Basket.get()
-        .then((basket) => dispatch(setBasket(basket)))
-        .catch((error) => console.log(error))
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
+  const initApp = useCallback(async () => {
+    try {
+      await dispatch(fetchCurrentUser());
+      await dispatch(fetchBasketAsync());
+    } catch (error) {
+      console.log(error);
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    initApp().then(() => setLoading(false));
+  }, [initApp]);
 
   if (loading)
     return (
@@ -57,7 +62,9 @@ function App() {
           <Route path={"/contact"} component={ContactPage} />
           <Route path={"/server-error"} component={ServerErrorComponent} />
           <Route path={"/basket-page"} component={Basketpage} />
-          <Route path={"/checkout"} component={Checkout} />
+          <PrivateRoute path={"/checkout"} component={Checkout} />
+          <Route path={"/login"} component={Login} />
+          <Route path={"/register"} component={Register} />
           <Route component={NotFoundComponent} />
         </Switch>
       </Container>
